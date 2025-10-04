@@ -1,0 +1,127 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+enum Role {
+  ADMIN
+  STUDENT
+}
+
+enum PaymentStatus {
+  PENDING
+  PAID
+  FAILED
+  REFUNDED
+}
+
+model User {
+  id          Int          @id @default(autoincrement())
+  email       String       @unique
+  password    String
+  firstName   String
+  lastName    String
+  role        Role         @default(STUDENT)
+  avatar      String?
+  bio         String?
+  
+  enrollments       Enrollment[]
+  reviews           Review[]
+  
+  createdAt   DateTime     @default(now())
+  updatedAt   DateTime     @updatedAt
+
+  @@map("users")
+}
+
+model Course {
+  id          Int          @id @default(autoincrement())
+  title       String
+  description String
+  price       Float
+  thumbnail   String?
+  isPublished Boolean      @default(false)
+  instructor  String?
+  
+  lessons     Lesson[]
+  enrollments Enrollment[]
+  reviews     Review[]
+  
+  createdAt   DateTime     @default(now())
+  updatedAt   DateTime     @updatedAt
+
+  @@map("courses")
+}
+
+model Lesson {
+  id          Int      @id @default(autoincrement())
+  title       String
+  description String?
+  content     String
+  videoUrl    String?
+  duration    Int?     
+  order       Int
+  isPublished Boolean  @default(false)
+  
+  course      Course   @relation(fields: [courseId], references: [id], onDelete: Cascade)
+  courseId    Int
+  
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  @@map("lessons")
+}
+
+model Enrollment {
+  id          Int      @id @default(autoincrement())
+  progress    Float    @default(0)
+  completedAt DateTime?
+  
+  student     User     @relation(fields: [studentId], references: [id], onDelete: Cascade)
+  studentId   Int
+  course      Course   @relation(fields: [courseId], references: [id], onDelete: Cascade)
+  courseId    Int
+
+  payments    Payment[]
+  
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  @@unique([studentId, courseId])
+  @@map("enrollments")
+}
+
+model Review {
+  id        Int      @id @default(autoincrement())
+  rating    Int    
+  comment   String?
+  
+  student   User     @relation(fields: [studentId], references: [id], onDelete: Cascade)
+  studentId Int
+  course    Course   @relation(fields: [courseId], references: [id], onDelete: Cascade)
+  courseId  Int
+  
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@unique([studentId, courseId])
+  @@map("reviews")
+}
+
+model Payment {
+  id            Int           @id @default(autoincrement())
+  amount        Float
+  status        PaymentStatus @default(PENDING)
+  
+  enrollment    Enrollment    @relation(fields: [enrollmentId], references: [id], onDelete: Cascade)
+  enrollmentId  Int
+
+  createdAt     DateTime      @default(now())
+  updatedAt     DateTime      @updatedAt
+
+  @@map("payments")
+}
