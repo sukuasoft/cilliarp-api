@@ -67,7 +67,7 @@ Uma API abrangente para plataforma de cursos construída com NestJS, apresentand
    MINIO_BUCKET_NAME="cilliarp-files"
    
    # Aplicação
-   PORT=3001
+   PORT=3030
    NODE_ENV="development"
    ```
 
@@ -92,7 +92,7 @@ Uma API abrangente para plataforma de cursos construída com NestJS, apresentand
    npm run start:prod
    ```
 
-A API estará disponível em `http://localhost:3001/api`
+A API estará disponível em `http://localhost:3030`
 
 ## 📚 Documentação da API
 
@@ -100,58 +100,58 @@ A API estará disponível em `http://localhost:3001/api`
 
 | Método | Endpoint | Descrição | Autenticação Necessária |
 |--------|----------|-----------|-------------------------|
-| POST | `/api/auth/register` | Registar novo utilizador | Não |
-| POST | `/api/auth/login` | Login do utilizador | Não |
-| GET | `/api/auth/profile` | Obter perfil do utilizador atual | Sim |
+| POST | `/auth/register` | Registar novo utilizador | Não |
+| POST | `/auth/login` | Login do utilizador | Não |
+| GET | `/auth/profile` | Obter perfil do utilizador atual | Sim |
 
 ### Endpoints de Utilizadores
 
 | Método | Endpoint | Descrição | Autenticação Necessária | Função |
 |--------|----------|-----------|-------------------------|--------|
-| GET | `/api/users` | Listar todos os utilizadores | Sim | Admin |
-| GET | `/api/users/:id` | Obter utilizador por ID | Sim | Qualquer |
-| PATCH | `/api/users/:id` | Atualizar utilizador | Sim | Proprietário/Admin |
-| DELETE | `/api/users/:id` | Eliminar utilizador | Sim | Proprietário/Admin |
-| POST | `/api/users/:id/avatar` | Upload de avatar | Sim | Proprietário/Admin |
-| GET | `/api/users/:id/avatar` | Obter URL do avatar | Sim | Qualquer |
+| GET | `/users` | Listar todos os utilizadores | Sim | Admin |
+| GET | `/users/:id` | Obter utilizador por ID | Sim | Qualquer |
+| PATCH | `/users/:id` | Atualizar utilizador | Sim | Proprietário/Admin |
+| DELETE | `/users/:id` | Eliminar utilizador | Sim | Proprietário/Admin |
+| POST | `/users/:id/avatar` | Upload de avatar | Sim | Proprietário/Admin |
+| GET | `/users/:id/avatar` | Obter URL do avatar | Sim | Qualquer |
 
 ### Endpoints de Cursos
 
 | Método | Endpoint | Descrição | Autenticação Necessária | Função |
 |--------|----------|-----------|-------------------------|--------|
-| GET | `/api/courses` | Listar cursos | Não | Qualquer |
-| POST | `/api/courses` | Criar curso | Sim | Admin |
-| GET | `/api/courses/:id` | Obter detalhes do curso | Não | Qualquer |
-| PATCH | `/api/courses/:id` | Atualizar curso | Sim | Admin |
-| DELETE | `/api/courses/:id` | Eliminar curso | Sim | Admin |
-| POST | `/api/courses/:id/thumbnail` | Upload de miniatura | Sim | Admin |
-| GET | `/api/courses/:id/thumbnail` | Obter URL da miniatura | Não | Qualquer |
+| GET | `/courses` | Listar cursos | Não | Qualquer |
+| POST | `/courses` | Criar curso | Sim | Admin |
+| GET | `/courses/:id` | Obter detalhes do curso | Não | Qualquer |
+| PATCH | `/courses/:id` | Atualizar curso | Sim | Admin |
+| DELETE | `/courses/:id` | Eliminar curso | Sim | Admin |
+| POST | `/courses/:id/thumbnail` | Upload de miniatura | Sim | Admin |
+| GET | `/courses/:id/thumbnail` | Obter URL da miniatura | Não | Qualquer |
 
 ### Endpoints de Aulas
 
 | Método | Endpoint | Descrição | Autenticação Necessária | Função |
 |--------|----------|-----------|-------------------------|--------|
-| GET | `/api/lessons` | Listar aulas | Não | Qualquer |
-| POST | `/api/lessons` | Criar aula | Sim | Admin |
-| GET | `/api/lessons/:id` | Obter detalhes da aula | Não | Qualquer |
-| PATCH | `/api/lessons/:id` | Atualizar aula | Sim | Admin |
-| DELETE | `/api/lessons/:id` | Eliminar aula | Sim | Admin |
-| POST | `/api/lessons/:id/video` | Upload de vídeo | Sim | Admin |
-| GET | `/api/lessons/:id/video` | Obter URL do vídeo | Sim | Estudante Inscrito |
-| PATCH | `/api/lessons/course/:courseId/reorder` | Reordenar aulas | Sim | Admin |
+| GET | `/lessons` | Listar aulas | Não | Qualquer |
+| POST | `/lessons` | Criar aula | Sim | Admin |
+| GET | `/lessons/:id` | Obter detalhes da aula | Não | Qualquer |
+| PATCH | `/lessons/:id` | Atualizar aula | Sim | Admin |
+| DELETE | `/lessons/:id` | Eliminar aula | Sim | Admin |
+| POST | `/lessons/:id/video` | Upload de vídeo | Sim | Admin |
+| GET | `/lessons/:id/video` | Obter URL do vídeo | Sim | Estudante Inscrito |
+| PATCH | `/lessons/course/:courseId/reorder` | Reordenar aulas | Sim | Admin |
 
 ### Endpoints de Inscrições
 
 | Método | Endpoint | Descrição | Autenticação Necessária | Função |
 |--------|----------|-----------|-------------------------|--------|
-| GET | `/api/enrollments` | Listar inscrições | Sim | Qualquer |
-| POST | `/api/enrollments` | Criar inscrição | Sim | Estudante |
-| GET | `/api/enrollments/:id` | Obter detalhes da inscrição | Sim | Proprietário/Admin |
-| PATCH | `/api/enrollments/:id` | Atualizar progresso | Sim | Proprietário/Admin |
-| DELETE | `/api/enrollments/:id` | Cancelar inscrição | Sim | Proprietário/Admin |
-| GET | `/api/enrollments/stats` | Obter estatísticas de inscrições | Sim | Admin |
-| GET | `/api/enrollments/student/:studentId/courses` | Obter cursos do estudante | Sim | Proprietário/Admin |
-| GET | `/api/enrollments/course/:courseId/students` | Obter estudantes do curso | Sim | Admin |
+| GET | `/enrollments` | Listar inscrições | Sim | Qualquer |
+| POST | `/enrollments` | Criar inscrição | Sim | Estudante |
+| GET | `/enrollments/:id` | Obter detalhes da inscrição | Sim | Proprietário/Admin |
+| PATCH | `/enrollments/:id` | Atualizar progresso | Sim | Proprietário/Admin |
+| DELETE | `/enrollments/:id` | Cancelar inscrição | Sim | Proprietário/Admin |
+| GET | `/enrollments/stats` | Obter estatísticas de inscrições | Sim | Admin |
+| GET | `/enrollments/student/:studentId/courses` | Obter cursos do estudante | Sim | Proprietário/Admin |
+| GET | `/enrollments/course/:courseId/students` | Obter estudantes do curso | Sim | Admin |
 
 ## 🔐 Autenticação
 

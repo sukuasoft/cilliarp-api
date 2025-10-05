@@ -43,7 +43,9 @@ export class LessonsController {
     const courseIdNum = courseId ? parseInt(courseId, 10) : undefined;
     const isPublished = published !== undefined ? published === 'true' : undefined;
     
-    return this.lessonsService.findAll(courseIdNum, isPublished, user?.role);
+    return {
+        lessons: this.lessonsService.findAll(courseIdNum, isPublished, user?.role)
+    };
   }
 
   @Get(':id')

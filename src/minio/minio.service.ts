@@ -11,21 +11,35 @@ export class MinioService {
   constructor(private configService: ConfigService) {
     this.bucketName = this.configService.get<string>('MINIO_BUCKET_NAME') || 'cilliarp-files';
     
+    const endpoint = this.configService.get<string>('MINIO_ENDPOINT') || 'localhost';
+    const port = parseInt(this.configService.get<string>('MINIO_PORT') || '9000');
+    const useSSL = this.configService.get<string>('MINIO_USE_SSL') === 'true';
+    const accessKey = this.configService.get<string>('MINIO_ROOT_USER') || 'minioadmin';
+    const secretKey = this.configService.get<string>('MINIO_ROOT_PASSWORD') || 'minioadmin123';
+
+    this.logger.log(`Configuring MinIO client: ${endpoint}:${port}, SSL: ${useSSL}, Bucket: ${this.bucketName}`);
+
     this.minioClient = new Minio.Client({
-      endPoint: this.configService.get<string>('MINIO_ENDPOINT') || 'localhost',
-      port: parseInt(this.configService.get<string>('MINIO_PORT') || '9000'),
-      useSSL: this.configService.get<string>('MINIO_USE_SSL') === 'true',
-      accessKey: this.configService.get<string>('MINIO_ACCESS_KEY') || 'minioadmin',
-      secretKey: this.configService.get<string>('MINIO_SECRET_KEY') || 'minioadmin',
+      endPoint: endpoint,
+      port: port,
+      useSSL: useSSL,
+      accessKey: accessKey,
+      secretKey: secretKey,
     });
 
-    this.ensureBucketExists();
+    // Delay bucket creation to avoid blocking application startup
+    this.ensureBucketExists().catch(error => {
+      this.logger.warn('MinIO bucket creation failed, but application will continue:', error.message);
+    });
   }
 
   private async ensureBucketExists() {
     try {
+      this.logger.log(`Checking if bucket ${this.bucketName} exists...`);
       const exists = await this.minioClient.bucketExists(this.bucketName);
+      
       if (!exists) {
+        this.logger.log(`Creating bucket ${this.bucketName}...`);
         await this.minioClient.makeBucket(this.bucketName, 'us-east-1');
         this.logger.log(`Bucket ${this.bucketName} created successfully`);
         
@@ -42,10 +56,19 @@ export class MinioService {
           ],
         };
         
-        await this.minioClient.setBucketPolicy(this.bucketName, JSON.stringify(policy));
+        try {
+          await this.minioClient.setBucketPolicy(this.bucketName, JSON.stringify(policy));
+          this.logger.log('Bucket policy set successfully');
+        } catch (policyError) {
+          this.logger.warn('Could not set bucket policy (this is normal for local MinIO):', policyError.message);
+        }
+      } else {
+        this.logger.log(`Bucket ${this.bucketName} already exists`);
       }
     } catch (error) {
-      this.logger.error('Error ensuring bucket exists:', error);
+      this.logger.error('Error ensuring bucket exists:', error.message);
+      this.logger.warn('MinIO might not be available. File upload features will be disabled.');
+      
     }
   }
 
